@@ -19,7 +19,11 @@ fn main() {
     ::from_reader(yaml_file)
     .expect("Could not read values.");
 
-    for (key, value) in scrape_config.schema.iter() {
-        println!("KEY: {} - VALUE: {:?}", key, value);
+    for (_, value) in scrape_config.schema.iter() {
+        let curr = value.as_mapping().unwrap();
+
+        for (key, value) in curr.iter() {
+            println!("{:?} = {:?}", key, value)
+        }
     }
 }
