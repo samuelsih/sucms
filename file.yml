@@ -1,0 +1,13 @@
+project_name: first-bro
+
+version: 10
+
+schema:
+  posts:
+    id: string
+    name: string
+    slug: string
+  category:
+    id: number
+    name: string
+    is_active: bool
