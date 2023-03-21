@@ -1,6 +1,5 @@
 project_name: first-bro
-
-version: 10
+create_new_folder: true
 
 schema:
   posts:

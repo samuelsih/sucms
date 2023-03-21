@@ -12,5 +12,5 @@ impl Logger {
     pub fn log(&mut self, msg: String) {
         self.length += 1;
         println!("{} {}", style(format!("[{}] ", self.length)).bold(), msg);
-    }   
+    }
 }

@@ -4,6 +4,6 @@ use serde_yaml::Value;
 #[derive(Serialize, Deserialize)]
 pub struct RawYAMLData {
     pub project_name: String,
-    pub version: u32,
+    pub create_new_folder: bool,
     pub schema: Value,
 }
