@@ -12,3 +12,4 @@ schema:
     id: number
     name: string
     is_active: bool
+    

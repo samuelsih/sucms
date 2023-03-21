@@ -1,3 +1,5 @@
+use std::error::Error;
+
 use serde_yaml::Value;
 
 #[derive(Debug)]
@@ -16,9 +18,9 @@ impl Config {
         }
     }
 
-    pub fn extract_schema(&mut self, value: Value) {
+    pub fn extract_schema(&mut self, value: Value) -> Result<(), Box<dyn Error>> {
         let schema = value.as_mapping().expect("cannot extract raw yaml spec");
-
+        
         for (key, value) in schema.iter() {
             let specs = value.as_mapping().expect("Bad schema config");
             let tablename = key.as_str().expect("can't read tablename");
@@ -30,6 +32,8 @@ impl Config {
     
             self.schema.push((tablename.to_string(), columns));
         }
+
+        Ok(())
     }
 }
 
