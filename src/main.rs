@@ -1,29 +1,23 @@
-use serde::{Deserialize, Serialize};
-use serde_yaml::Value;
-use std::fs::File;
-use std::collections::HashMap;
+use std::{fs::File};
 
-#[derive(Debug, Serialize, Deserialize)]
-struct Config {
-    project_name: String,
-    version: u32,
-    schema: HashMap<String, Value>,
-}
+mod raw_yaml_data;
+mod config;
+
+use raw_yaml_data::RawYAMLData;
+use config::Config;
 
 fn main() {
     let yaml_file = File
     ::open("file.yml")
     .expect("Could not open file.");
     
-    let scrape_config: Config = serde_yaml
+    let scrape_config: RawYAMLData = serde_yaml
     ::from_reader(yaml_file)
-    .expect("Could not read values.");
+    .expect("Could not read yaml_file.");
 
-    for (_, value) in scrape_config.schema.iter() {
-        let curr = value.as_mapping().unwrap();
+    let mut config = Config::new(scrape_config.project_name, scrape_config.version);
+    config.extract_schema(scrape_config.schema);
 
-        for (key, value) in curr.iter() {
-            println!("{:?} = {:?}", key, value)
-        }
-    }
+    println!("{:#?}", config);
+
 }
