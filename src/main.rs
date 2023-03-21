@@ -9,7 +9,7 @@ mod generator;
 
 use raw_yaml_data::RawYAMLData;
 use config::Config;
-use logger::{Logger, Icons::LookingGlass, Icons::Sparkle};
+use logger::{Logger};
 use generator::generate;
 
 fn main() {
@@ -18,7 +18,7 @@ fn main() {
     let filename = if args.len() < 2 { "config.yml" } else { &args[1] };
 
     // open file
-    logger.log(format!("Reading {}", filename), LookingGlass);
+    logger.log(format!("Reading {}", filename));
     let yaml_file = open_file(filename, &mut logger);
     
     //read yaml file
@@ -28,8 +28,8 @@ fn main() {
 
     let mut config = Config::new(raw.project_name, raw.version);
     match config.extract_schema(raw.schema) {
-        Ok(_) => logger.log("parse schema success".to_string(), Sparkle),
-        Err(e) => logger.log_err(e.to_string())
+        Ok(_) => logger.log("parse schema success".to_string()),
+        Err(e) => logger.log(e.to_string())
     }
 
     generate(config);
@@ -42,7 +42,7 @@ fn open_file(filename: &str, logger: &mut Logger) -> File {
         Ok(file) => file,
         Err(error) => match error.kind() {
             other_error => {
-                logger.log_err(format!("Problem opening the file: {:?}", other_error));
+                logger.log(format!("Problem opening the file: {:?}", other_error));
                 exit(1);
             }
         }
