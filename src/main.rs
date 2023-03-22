@@ -1,6 +1,7 @@
 use std::env;
 use std::fs::File;
 use std::process::exit;
+use ctrlc;
 
 mod config;
 mod generator;
@@ -13,6 +14,14 @@ use logger::log;
 use raw_yaml_data::RawYAMLData;
 
 fn main() {
+    if let Err(err) = ctrlc::set_handler(move || {
+        log("Cancelled!!!".to_string());
+        exit(1);
+    }) {
+        log(format!("Can't handle Ctrl+C events: {}", err));
+        exit(1);
+    }
+
     let args: Vec<String> = env::args().collect();
     let filename = if args.len() < 2 {
         "config.yml"

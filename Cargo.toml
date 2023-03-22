@@ -11,3 +11,4 @@ serde = { version = "1.0.157", features = ["derive"] }
 serde_yaml = "0.9"
 console = { version = "0.15", default-features = false, features = ["ansi-parsing"] }
 duct = "0.13.6"
+ctrlc = { version = "3.0", features = ["termination"] }

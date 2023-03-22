@@ -1,6 +1,6 @@
 use crate::config::Config;
 use std::{
-    io::{BufReader, BufRead},
+    io::{BufReader, BufRead}, process::exit,
 };
 use duct::cmd;
 
@@ -9,23 +9,22 @@ pub fn generate(config: Config) {
 }
 
 fn generate_laravel_project(name: &str, want_in_new_folder: bool) {
-    if want_in_new_folder {
-        let cmd = cmd!("cmd", "/C", "composer", "create-project", "laravel/laravel", name);
-        let reader = cmd.stderr_to_stdout().reader().unwrap();
-        let lines = BufReader::new(reader).lines();
-    
-        for line in lines {
-            println!("{}", line.unwrap());
-        }
+    let cmd = if want_in_new_folder {
+        cmd!("cmd", "/C", "composer", "create-project", "laravel/laravel", name)
+    } else {
+        cmd!("cmd", "/C", "composer", "create-project", "laravel/laravel", ".")
+    };
 
-        return;
-    }
-
-    let cmd = cmd!("cmd", "/C", "composer", "create-project", "laravel/laravel", ".");
     let reader = cmd.stderr_to_stdout().reader().unwrap();
     let lines = BufReader::new(reader).lines();
 
     for line in lines {
-        println!("{}", line.unwrap());
+        match line {
+            Ok(l) => println!("{}", l),
+            Err(e) => {
+                println!("{}", e);
+                exit(1);
+            }
+        }
     }
 }
