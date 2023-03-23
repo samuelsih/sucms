@@ -1,5 +1,5 @@
 project_name: first-bro
-create_new_folder: true
+new_folder: true
 
 schema:
   posts:
@@ -11,4 +11,3 @@ schema:
     id: number
     name: string
     is_active: bool
-    
