@@ -6,8 +6,12 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 
+	"github.com/samuelsih/sucms/config"
+	"github.com/samuelsih/sucms/pkg"
+	"github.com/samuelsih/sucms/windows"
 	"gopkg.in/yaml.v3"
 )
 
@@ -22,23 +26,28 @@ func main() {
 		filename = args[1]
 	}
 
-	info("Reading " + filename)
+	pkg.LogInfo("Reading " + filename, nil)
 
 	content, err := os.ReadFile(filename)
 	if err != nil {
-		exit(err)
+		pkg.LogFail(err.Error())
 	}
 
-	var config Config
+	var config config.Raw
 	if err := yaml.Unmarshal([]byte(content), &config); err != nil {
 		log.Fatal(err)
 	}
 
-	Generate(ctx, config)
+	if runtime.GOOS == "windows" {
+		windows.RunScript(ctx, config)
+	}
+
+	pkg.LogSuccess("Success for generating " + config.ProjectName)
 }
 
 func listenForCtrlC(ctx context.Context, stop context.CancelFunc) {
 	<-ctx.Done()
 	stop()
-	exit("exiting...")
+	pkg.LogInfo("exiting...", nil)
+	os.Exit(1)
 }
