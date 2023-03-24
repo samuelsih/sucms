@@ -24,3 +24,7 @@ func generateMigrationCMD(config config.Raw) (string, [][]string) {
 
 	return "cmd", cmds
 }
+
+func findMigrationFileCMD() (string, []string) {
+	return "cmd", []string{"/C", "dir"}
+}
