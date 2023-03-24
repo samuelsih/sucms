@@ -9,6 +9,7 @@ import (
 
 	"github.com/samuelsih/sucms/config"
 	"github.com/samuelsih/sucms/pkg"
+	"github.com/samuelsih/sucms/template"
 )
 
 func RunScript(ctx context.Context, raw config.Raw) {
@@ -42,7 +43,7 @@ func RunScript(ctx context.Context, raw config.Raw) {
 		return nil
 	})
 
-	fmt.Println(extracted)
+	template.Build(extracted)
 }
 
 // Generating Laravel File
@@ -143,7 +144,7 @@ func extractSchemas(cfg config.Raw) config.SchemasDefined {
 	configMapper := make(config.SchemasDefined)
 
 	for name, value := range cfg.Schemas {
-		newName := fmt.Sprintf("%s|%s", name, getTableName(name))
+		newName := fmt.Sprintf("%s|%s", toPlural(name), getTableName(name))
 		configMapper[newName] = value
 	}
 
@@ -153,15 +154,21 @@ func extractSchemas(cfg config.Raw) config.SchemasDefined {
 func getTableName(s string) string {
 	s = strings.ToLower(s)
 
+	return fmt.Sprintf("create_%s_table.php", toPlural(s))
+}
+
+func toPlural(s string) string {
+	s = strings.ToLower(s)
+
 	if strings.HasSuffix(s, "y") {
 		s := s[:len(s)-1]
 		s += "ies"
-		return fmt.Sprintf("create_%s_table.php", s)
+		return s
 	}
 
 	if !strings.HasSuffix(s, "s") {
-		return fmt.Sprintf("create_%ss_table.php", s)
+		return s + "s"
 	}
 
-	return fmt.Sprintf("create_%s_table.php", s)
+	return s
 }

@@ -1,22 +1,33 @@
 package template
 
-type Builder struct {
-	name string
-	datatype string
-	skeleton []string
-	hasErr error
-}
+import (
+	_ "embed"
+	"os"
+	"text/template"
 
-func (b *Builder) SetName(name string) *Builder {
-	b.name = name
-	return b
-}
+	"github.com/samuelsih/sucms/config"
+	"github.com/samuelsih/sucms/pkg"
+)
 
-func (b *Builder) SetType(datatype string) *Builder {
-	b.datatype = datatype
-	return b
-}
+//go:embed one.tmpl
+var file string
 
-func (b *Builder) Build() error {
-	return nil
+func Build(c config.Extracted) {
+	tmplDatas := Generate(c)
+
+	t, err := template.New("one_tmpl").Parse(file)
+	if err != nil {
+		pkg.LogFail(err.Error())
+	}
+
+	for _, tdata := range tmplDatas {
+		f, err := os.OpenFile(tdata.Filename, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+		if err != nil {
+			pkg.LogFail(err.Error())
+		}
+
+		defer f.Close()
+
+		t.Execute(f, tdata)
+	}
 }

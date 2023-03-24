@@ -6,8 +6,8 @@ schema:
     id: string
     name: string
     slug: string
-    bruh: 12000
+    bruh: integer
   category:
-    id: number
+    id: integer
     name: string
-    is_active: bool
+    is_active: boolean
